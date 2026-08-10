@@ -12,7 +12,7 @@
       "name": "B",
       "role": "mover",
       "createdAt": "2026-08-06T03:41:00.766Z",
-      "password": ""
+      "password": "0704"
     },
     {
       "id": "e2855cd6-f5a3-4a4e-84d0-e7f76de86ccd",
@@ -285,5 +285,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786383472830
+  "updatedAt": 1786383888851
 }
