@@ -170,6 +170,13 @@
             <option value="low">Lowest to highest</option>
             <option value="name">Name A–Z</option>
           </select>
+          <label class="week-sort-label manager-only" for="week-job-filter">Show</label>
+          <select id="week-job-filter" class="week-sort manager-only">
+            <option value="all">All job types</option>
+            <option value="local">Local jobs only</option>
+            <option value="ld">LD jobs only</option>
+            <option value="nb">Non-billable only</option>
+          </select>
           <button type="button" id="clear-week-btn" class="btn-danger-solid" hidden>
             Clear this week
           </button>
@@ -199,7 +206,7 @@
       <section id="panel-employee" class="panel" role="tabpanel" hidden>
         <div class="section-head">
           <h2 id="employee-panel-title">Employee focus</h2>
-          <p id="employee-panel-copy">Search someone and see their jobs and hours week by week. You can edit jobs from here too.</p>
+          <p id="employee-panel-copy">Search someone and see their jobs and hours week by week. With no one selected, all employee totals show below.</p>
         </div>
 
         <div id="employee-picker-wrap" class="field-row">

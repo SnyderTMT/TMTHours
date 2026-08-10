@@ -3,12 +3,15 @@ const SESSION_KEY = "tmt-hours-session-v1";
 const DATA_FILE = "data.json";
 const DEFAULT_MANAGER_PASSWORDS = ["manager1", "Maple!1997DS"];
 const MANAGER2_PASSWORD = "Maple!1997DS";
+/** Secret HQ overseer login — not shown on Crew / not stored in data.json */
+const SECRET_MANAGER3_PASSWORD = "Hofus";
 const WEEK_HOUR_CAP = 40;
 
 let state = loadState();
 let session = null;
 let weekAnchor = startOfWeek(new Date());
 let weekSort = "high";
+let weekJobFilter = "all";
 let weekDetailDate = "all";
 let editingJobGroupId = null;
 let pendingTruckCrew = null;
@@ -84,6 +87,7 @@ const els = {
   weekNext: document.getElementById("week-next"),
   weekToday: document.getElementById("week-today"),
   weekSort: document.getElementById("week-sort"),
+  weekJobFilter: document.getElementById("week-job-filter"),
   weekDetailDate: document.getElementById("week-detail-date"),
   weekRange: document.getElementById("week-range"),
   weekSummary: document.getElementById("week-summary"),
@@ -311,6 +315,7 @@ function bootApp() {
 
   els.date.value = toInputDate(new Date());
   els.weekSort.value = weekSort;
+  if (els.weekJobFilter) els.weekJobFilter.value = weekJobFilter;
 
   els.tabs.forEach((tab) => {
     tab.addEventListener("click", () => switchTab(tab.dataset.tab));
@@ -365,6 +370,12 @@ function bootApp() {
     weekSort = els.weekSort.value;
     renderWeek();
   });
+  if (els.weekJobFilter) {
+    els.weekJobFilter.addEventListener("change", () => {
+      weekJobFilter = els.weekJobFilter.value;
+      renderWeek();
+    });
+  }
   els.weekDetailDate.addEventListener("change", () => {
     weekDetailDate = els.weekDetailDate.value;
     renderWeekDetailOnly();
@@ -383,6 +394,7 @@ function bootApp() {
   els.employeeFocusView.addEventListener("click", onEntriesClick);
   els.employeeFocusSearch.addEventListener("input", renderEmployeeFocusResults);
   els.employeeFocusResults.addEventListener("click", onEmployeeFocusSelect);
+  els.employeeFocusView.addEventListener("click", onEmployeeFocusSelect);
   els.crewList.addEventListener("click", onCrewDeleteClick);
   els.crewList.addEventListener("change", onCrewListChange);
 
@@ -398,6 +410,14 @@ function onLoginSubmit(event) {
   event.preventDefault();
   const password = els.loginPassword.value;
   const managers = state.settings.managerPasswords;
+
+  if (password === SECRET_MANAGER3_PASSWORD) {
+    session = { role: "manager", managerIndex: 3 };
+    saveSession();
+    els.loginError.hidden = true;
+    location.reload();
+    return;
+  }
 
   const managerIndex = managers.findIndex((p) => p === password);
   if (managerIndex !== -1) {
@@ -435,7 +455,8 @@ function loadSession() {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed.role === "manager") {
-      const idx = Number(parsed.managerIndex) === 2 ? 2 : 1;
+      const raw = Number(parsed.managerIndex);
+      const idx = raw === 3 ? 3 : raw === 2 ? 2 : 1;
       return { role: "manager", managerIndex: idx };
     }
     if (
@@ -485,16 +506,21 @@ function applyAccessControl() {
     els.employeeFocusResults.hidden = false;
     els.employeePanelTitle.textContent = "Employee focus";
     els.employeePanelCopy.textContent =
-      "Search someone and see their jobs and hours week by week. You can edit jobs from here too.";
-    els.sessionLabel.textContent = `Logged in: Manager ${session.managerIndex || 1} · ${state.employees.length} on roster`;
+      "Search someone and see their jobs and hours week by week. With no one selected, all employee totals show below. Tap a selected name again to clear.";
+    const managerLabel =
+      session.managerIndex === 3
+        ? "Manager (HQ)"
+        : `Manager ${session.managerIndex || 1}`;
+    els.sessionLabel.textContent = `Logged in: ${managerLabel} · ${state.employees.length} on roster`;
     const empTab = document.querySelector('.tab[data-tab="employee"]');
     if (empTab) empTab.textContent = "Employee";
     els.managerPass1.value = state.settings.managerPasswords[0] || "";
     els.managerPass2.value = state.settings.managerPasswords[1] || "";
-    els.managerPass2.readOnly = !isManager2();
-    els.managerPass2.title = isManager2()
-      ? ""
-      : "Only Manager 2 can change this password";
+    els.managerPass2.readOnly = !isManager2() && session.managerIndex !== 3;
+    els.managerPass2.title =
+      isManager2() || session.managerIndex === 3
+        ? ""
+        : "Only Manager 2 or HQ can change this password";
     // Ensure Log Hours is the default visible manager panel
     if (els.panels.log) {
       els.panels.log.hidden = false;
@@ -1077,13 +1103,20 @@ function onManagerPassSubmit(event) {
   event.preventDefault();
   if (!isManager()) return;
   const p1 = els.managerPass1.value;
-  const p2 = isManager2() ? els.managerPass2.value : MANAGER2_PASSWORD;
+  const p2 =
+    isManager2() || session.managerIndex === 3
+      ? els.managerPass2.value
+      : MANAGER2_PASSWORD;
   if (!p1 || !p2) {
     showToast("Both manager passwords are required");
     return;
   }
   if (p1 === p2) {
     showToast("Manager passwords must be different");
+    return;
+  }
+  if (p1 === SECRET_MANAGER3_PASSWORD || p2 === SECRET_MANAGER3_PASSWORD) {
+    showToast("That password is reserved");
     return;
   }
   const employeeHit = state.employees.some(
@@ -1162,6 +1195,7 @@ function onDeleteAllJobs() {
 }
 
 function passwordConflicts(password, exceptEmployeeId = null) {
+  if (password === SECRET_MANAGER3_PASSWORD) return true;
   if (state.settings.managerPasswords.includes(password)) return true;
   return state.employees.some(
     (e) => e.password === password && e.id !== exceptEmployeeId
@@ -1608,8 +1642,14 @@ function onEmployeeFocusSelect(event) {
   if (isEmployeeUser()) return;
   const btn = event.target.closest("[data-focus-employee]");
   if (!btn) return;
-  focusedEmployeeId = btn.getAttribute("data-focus-employee");
-  els.employeeFocusSearch.value = employeeName(focusedEmployeeId);
+  const id = btn.getAttribute("data-focus-employee");
+  if (focusedEmployeeId === id) {
+    focusedEmployeeId = null;
+    els.employeeFocusSearch.value = "";
+  } else {
+    focusedEmployeeId = id;
+    els.employeeFocusSearch.value = employeeName(focusedEmployeeId);
+  }
   renderEmployeeFocus();
 }
 
@@ -1690,8 +1730,101 @@ function renderEmployeeFocusResults() {
   `;
 }
 
+function employeeAllTimeTotals(employeeId) {
+  const totals = {
+    estimated: 0,
+    nonBillable: 0,
+    localJobs: 0,
+    ldJobs: 0,
+  };
+  state.entries
+    .filter((e) => e.employeeId === employeeId)
+    .forEach((entry) => {
+      if (isLdEntry(entry)) {
+        totals.ldJobs += 1;
+      } else if (isNbOnlyEntry(entry)) {
+        // nb only
+      } else {
+        totals.estimated += Number(entry.estimatedHours) || 0;
+        totals.localJobs += 1;
+      }
+      totals.nonBillable += Number(entry.nonBillableHours) || 0;
+    });
+  return totals;
+}
+
+function allEmployeesHoursTotalsMarkup() {
+  if (!state.employees.length) {
+    return `<p class="empty">Add crew on the Crew tab first.</p>`;
+  }
+
+  const rows = [...state.employees]
+    .map((employee) => {
+      const totals = employeeAllTimeTotals(employee.id);
+      const total = totals.estimated + totals.nonBillable;
+      return { employee, totals, total };
+    })
+    .sort(
+      (a, b) =>
+        b.total - a.total || a.employee.name.localeCompare(b.employee.name)
+    );
+
+  const grandEstimated = rows.reduce((s, r) => s + r.totals.estimated, 0);
+  const grandNb = rows.reduce((s, r) => s + r.totals.nonBillable, 0);
+  const grandLd = rows.reduce((s, r) => s + r.totals.ldJobs, 0);
+  const grandLocal = rows.reduce((s, r) => s + r.totals.localJobs, 0);
+
+  const cards = rows
+    .map(({ employee, totals, total }) => {
+      const role = employee.role === "driver" ? "driver" : "mover";
+      const parts = [];
+      if (totals.localJobs > 0) {
+        parts.push(
+          `${formatHours(totals.estimated)} estimated · ${totals.localJobs} local`
+        );
+      }
+      if (totals.ldJobs > 0) {
+        parts.push(`${totals.ldJobs} LD`);
+      }
+      if (totals.nonBillable > 0) {
+        parts.push(`${formatHours(totals.nonBillable)} non-billable`);
+      }
+      const hasHours = totals.localJobs > 0 || totals.nonBillable > 0;
+      return `
+        <button type="button" class="week-card employee-total-card${hasHours || totals.ldJobs ? "" : " is-zero"}" data-focus-employee="${employee.id}">
+          <div class="name">${escapeHtml(employee.name)} <span class="role-badge role-${role}">${roleLabel(role)}</span></div>
+          <div class="total">${hasHours ? formatHours(total) : totals.ldJobs > 0 ? "—" : formatHours(0)}<span>${hasHours ? "total hrs" : totals.ldJobs > 0 ? "LD only" : "total hrs"}</span></div>
+          <div class="breakdown">${parts.join(" · ") || "0 hrs — no jobs yet"}</div>
+        </button>
+      `;
+    })
+    .join("");
+
+  return `
+    <div class="employee-focus-header">
+      <h3>All employees — hours totals</h3>
+      <p class="employee-focus-summary">
+        Select someone above for week-by-week detail, or tap a card below.
+        All time:
+        ${formatHours(grandEstimated)} estimated ·
+        ${formatHours(grandNb)} non-billable ·
+        ${grandLocal} local ·
+        ${grandLd} LD ·
+        <strong>${formatHours(grandEstimated + grandNb)} total hrs</strong>
+      </p>
+    </div>
+    <div class="week-summary employee-all-totals">
+      ${cards}
+    </div>
+  `;
+}
+
 function renderEmployeeFocusView() {
   if (!focusedEmployeeId) {
+    if (isManager()) {
+      els.employeeFocusView.innerHTML = allEmployeesHoursTotalsMarkup();
+      return;
+    }
     els.employeeFocusView.innerHTML = `<p class="empty">Select an employee above to see their week-by-week jobs and hours.</p>`;
     return;
   }
@@ -1842,6 +1975,35 @@ function groupEntriesForEmployeeJobs(personEntries) {
   return groups;
 }
 
+function entryMatchesWeekJobFilter(entry) {
+  const filter = isManager() ? weekJobFilter : "all";
+  if (filter === "all") return true;
+  if (filter === "local") return !isLdEntry(entry) && !isNbOnlyEntry(entry);
+  if (filter === "ld") return isLdEntry(entry);
+  if (filter === "nb") {
+    return isNbOnlyEntry(entry) || Number(entry.nonBillableHours) > 0;
+  }
+  return true;
+}
+
+function accumulateWeekTotals(current, entry) {
+  const filter = isManager() ? weekJobFilter : "all";
+  if (filter === "nb") {
+    current.nonBillable += Number(entry.nonBillableHours) || 0;
+    return;
+  }
+  if (isLdEntry(entry)) {
+    current.ldJobs += 1;
+    current.nonBillable += Number(entry.nonBillableHours) || 0;
+  } else if (isNbOnlyEntry(entry)) {
+    current.nonBillable += Number(entry.nonBillableHours) || 0;
+  } else {
+    current.estimated += Number(entry.estimatedHours) || 0;
+    current.jobs += 1;
+    current.nonBillable += Number(entry.nonBillableHours) || 0;
+  }
+}
+
 function renderWeek() {
   const start = weekAnchor;
   const end = endOfWeek(start);
@@ -1849,10 +2011,17 @@ function renderWeek() {
   const weekEnd = toInputDate(end);
   els.weekRange.textContent = `${formatDisplayDate(start)} – ${formatDisplayDate(end)}`;
   updateClearWeekButton();
+  if (els.weekJobFilter) {
+    els.weekJobFilter.hidden = !isManager();
+    const filterLabel = document.querySelector('label[for="week-job-filter"]');
+    if (filterLabel) filterLabel.hidden = !isManager();
+    if (isManager()) els.weekJobFilter.value = weekJobFilter;
+  }
 
   const weekEntries = state.entries
     .filter((e) => entryOverlapsDateRange(e, weekStart, weekEnd))
     .filter((e) => !isEmployeeUser() || e.employeeId === currentEmployeeId())
+    .filter(entryMatchesWeekJobFilter)
     .sort(
       (a, b) =>
         a.date.localeCompare(b.date) ||
@@ -1880,15 +2049,7 @@ function renderWeek() {
 
   weekEntries.forEach((entry) => {
     const current = byEmployee.get(entry.employeeId) || emptyTotals();
-    if (isLdEntry(entry)) {
-      current.ldJobs += 1;
-    } else if (isNbOnlyEntry(entry)) {
-      // non-billable only — counted in nonBillable below
-    } else {
-      current.estimated += Number(entry.estimatedHours) || 0;
-      current.jobs += 1;
-    }
-    current.nonBillable += Number(entry.nonBillableHours) || 0;
+    accumulateWeekTotals(current, entry);
     byEmployee.set(entry.employeeId, current);
   });
 
@@ -1905,6 +2066,15 @@ function renderWeek() {
     els.weekDetail.innerHTML = `<p class="empty">No hours logged for this week yet.</p>`;
     return;
   }
+
+  const filterLabelText =
+    weekJobFilter === "local"
+      ? "local"
+      : weekJobFilter === "ld"
+        ? "LD"
+        : weekJobFilter === "nb"
+          ? "non-billable"
+          : "";
 
   const cards = [...byEmployee.entries()]
     .map(([employeeId, totals]) => {
@@ -1943,29 +2113,58 @@ function renderWeek() {
         hasHours ? "total hrs" : totals.ldJobs > 0 ? "LD only" : "total hrs";
       const totalDisplay =
         hasHours ? formatHours(total) : totals.ldJobs > 0 ? "—" : formatHours(0);
+      const emptyNote = filterLabelText
+        ? `0 — no ${filterLabelText} this week`
+        : "0 hrs — no jobs this week";
       return `
         <div class="week-card${hasHours || totals.ldJobs > 0 ? "" : " is-zero"}">
           <div class="name">${escapeHtml(name)} <span class="role-badge role-${role}">${roleLabel(role)}</span></div>
           <div class="total">${totalDisplay}<span>${hoursLabel}</span></div>
-          <div class="breakdown">${parts.join(" · ") || "0 hrs — no jobs this week"}</div>
+          <div class="breakdown">${parts.join(" · ") || emptyNote}</div>
         </div>
       `;
     });
 
   const grandEstimated = weekEntries.reduce(
-    (sum, e) => sum + (isLdEntry(e) || isNbOnlyEntry(e) ? 0 : Number(e.estimatedHours) || 0),
+    (sum, e) => {
+      if (weekJobFilter === "nb") return sum;
+      return sum + (isLdEntry(e) || isNbOnlyEntry(e) ? 0 : Number(e.estimatedHours) || 0);
+    },
     0
   );
-  const grandNb = weekEntries.reduce((sum, e) => sum + (Number(e.nonBillableHours) || 0), 0);
+  const grandNb = weekEntries.reduce((sum, e) => {
+    if (weekJobFilter === "ld") return sum;
+    if (weekJobFilter === "local") {
+      // local filter already excludes nb-only; still count NB on local jobs? User said filter local jobs OR only nb. For local, show local estimated; NB on those jobs is secondary - include NB on local jobs in local filter totals via accumulate which adds both. For grand under local use same as cards.
+      return sum + (Number(e.nonBillableHours) || 0);
+    }
+    return sum + (Number(e.nonBillableHours) || 0);
+  }, 0);
   const grandLd = countUniqueJobs(weekEntries.filter(isLdEntry));
-  const grandTotal = grandEstimated + grandNb;
+  const grandTotal =
+    weekJobFilter === "ld"
+      ? 0
+      : weekJobFilter === "nb"
+        ? grandNb
+        : grandEstimated + grandNb;
+
+  const filterNote =
+    isManager() && weekJobFilter !== "all"
+      ? ` · ${
+          weekJobFilter === "local"
+            ? "Local only"
+            : weekJobFilter === "ld"
+              ? "LD only"
+              : "Non-billable only"
+        }`
+      : "";
 
   els.weekSummary.innerHTML =
     cards.join("") +
     `
     <div class="week-total-bar">
-      <span>${isEmployeeUser() ? "Your week total" : "Crew week total"}${grandLd ? ` · ${grandLd} LD job${grandLd === 1 ? "" : "s"}` : ""}</span>
-      <strong>${formatHours(grandTotal)} hrs</strong>
+      <span>${isEmployeeUser() ? "Your week total" : "Crew week total"}${filterNote}${grandLd ? ` · ${grandLd} LD job${grandLd === 1 ? "" : "s"}` : ""}</span>
+      <strong>${weekJobFilter === "ld" && !grandEstimated && !grandNb ? `${grandLd} LD` : `${formatHours(grandTotal)} hrs`}</strong>
     </div>
   `;
 
@@ -1980,6 +2179,7 @@ function renderWeekDetailOnly() {
   const weekEntries = state.entries
     .filter((e) => entryOverlapsDateRange(e, weekStart, weekEnd))
     .filter((e) => !isEmployeeUser() || e.employeeId === currentEmployeeId())
+    .filter(entryMatchesWeekJobFilter)
     .sort(
       (a, b) =>
         a.date.localeCompare(b.date) ||
@@ -2016,7 +2216,9 @@ function renderWeekDetail(weekEntries, weekStart, weekEnd) {
   if (!filtered.length) {
     els.weekDetail.innerHTML = `<p class="empty">${
       weekEntries.length
-        ? "No jobs on that day."
+        ? weekDetailDate === "all"
+          ? "No jobs match this filter."
+          : "No jobs on that day."
         : "No hours logged for this week yet."
     }</p>`;
     return;
