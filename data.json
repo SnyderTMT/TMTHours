@@ -47,7 +47,7 @@
       "name": "George",
       "role": "mover",
       "createdAt": "2026-08-06T04:06:58.903Z",
-      "password": ""
+      "password": "0411"
     },
     {
       "id": "59a5af61-fed4-4e81-9538-a1a18d33448e",
@@ -370,5 +370,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786391933933
+  "updatedAt": 1786392422435
 }
