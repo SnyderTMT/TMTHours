@@ -311,6 +311,57 @@
       "truckCount": 1,
       "createdAt": "2026-08-10T19:27:17.827Z",
       "updatedAt": "2026-08-10T19:27:17.828Z"
+    },
+    {
+      "id": "a9dd0177-8444-461f-a934-a9b332fa2e8e",
+      "employeeId": "35bc1b3d-194a-4015-aef3-249e925d2648",
+      "truckNumber": 1,
+      "jobRole": "driver",
+      "jobGroupId": "89aa9efc-8485-43ef-bcb0-1edc9b877dbb",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 2.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 2/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T19:41:30.033Z",
+      "updatedAt": "2026-08-10T19:41:30.033Z"
+    },
+    {
+      "id": "e912337a-0ab2-498e-9e8a-381cbd9c5f9f",
+      "employeeId": "390b9929-a6c6-4377-8a89-01faf1fe5486",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "89aa9efc-8485-43ef-bcb0-1edc9b877dbb",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 2.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 2/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T19:41:30.033Z",
+      "updatedAt": "2026-08-10T19:41:30.033Z"
+    },
+    {
+      "id": "2ea6a62d-09d9-4ff9-8da6-205a893f9a10",
+      "employeeId": "6d965c34-5cf8-409c-bb26-67dbfe88f24a",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "89aa9efc-8485-43ef-bcb0-1edc9b877dbb",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 2.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 2/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T19:41:30.033Z",
+      "updatedAt": "2026-08-10T19:41:30.033Z"
     }
   ],
   "settings": {
@@ -319,5 +370,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786390245902
+  "updatedAt": 1786390901788
 }
