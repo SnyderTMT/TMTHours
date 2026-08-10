@@ -1860,24 +1860,26 @@ function renderWeek() {
         a.createdAt.localeCompare(b.createdAt)
     );
 
-  if (!weekEntries.length) {
-    els.weekSummary.innerHTML = `<p class="empty">No hours logged for this week yet.</p>`;
-    weekDetailDate = "all";
-    els.weekDetailDate.innerHTML = `<option value="all">All days this week</option>`;
-    els.weekDetailDate.value = "all";
-    els.weekDetailDate.disabled = true;
-    els.weekDetail.innerHTML = `<p class="empty">No hours logged for this week yet.</p>`;
-    return;
-  }
+  const emptyTotals = () => ({
+    estimated: 0,
+    nonBillable: 0,
+    jobs: 0,
+    ldJobs: 0,
+  });
 
   const byEmployee = new Map();
+
+  // Managers: show every roster person (0 if they didn’t work this week)
+  if (isManager()) {
+    state.employees.forEach((employee) => {
+      byEmployee.set(employee.id, emptyTotals());
+    });
+  } else if (isEmployeeUser() && currentEmployeeId()) {
+    byEmployee.set(currentEmployeeId(), emptyTotals());
+  }
+
   weekEntries.forEach((entry) => {
-    const current = byEmployee.get(entry.employeeId) || {
-      estimated: 0,
-      nonBillable: 0,
-      jobs: 0,
-      ldJobs: 0,
-    };
+    const current = byEmployee.get(entry.employeeId) || emptyTotals();
     if (isLdEntry(entry)) {
       current.ldJobs += 1;
     } else if (isNbOnlyEntry(entry)) {
@@ -1889,6 +1891,20 @@ function renderWeek() {
     current.nonBillable += Number(entry.nonBillableHours) || 0;
     byEmployee.set(entry.employeeId, current);
   });
+
+  if (!byEmployee.size) {
+    els.weekSummary.innerHTML = `<p class="empty">${
+      isManager()
+        ? "Add crew on the Crew tab — everyone will show here each week (0 if they haven’t worked)."
+        : "No hours logged for this week yet."
+    }</p>`;
+    weekDetailDate = "all";
+    els.weekDetailDate.innerHTML = `<option value="all">All days this week</option>`;
+    els.weekDetailDate.value = "all";
+    els.weekDetailDate.disabled = true;
+    els.weekDetail.innerHTML = `<p class="empty">No hours logged for this week yet.</p>`;
+    return;
+  }
 
   const cards = [...byEmployee.entries()]
     .map(([employeeId, totals]) => {
@@ -1922,12 +1938,16 @@ function renderWeek() {
       if (totals.nonBillable > 0) {
         parts.push(`${formatHours(totals.nonBillable)} non-billable`);
       }
-      const hoursLabel = totals.jobs > 0 || totals.nonBillable > 0 ? "total hrs" : "LD only";
+      const hasHours = totals.jobs > 0 || totals.nonBillable > 0;
+      const hoursLabel =
+        hasHours ? "total hrs" : totals.ldJobs > 0 ? "LD only" : "total hrs";
+      const totalDisplay =
+        hasHours ? formatHours(total) : totals.ldJobs > 0 ? "—" : formatHours(0);
       return `
-        <div class="week-card">
+        <div class="week-card${hasHours || totals.ldJobs > 0 ? "" : " is-zero"}">
           <div class="name">${escapeHtml(name)} <span class="role-badge role-${role}">${roleLabel(role)}</span></div>
-          <div class="total">${totals.jobs > 0 || totals.nonBillable > 0 ? formatHours(total) : "—"}<span>${hoursLabel}</span></div>
-          <div class="breakdown">${parts.join(" · ") || "No hours"}</div>
+          <div class="total">${totalDisplay}<span>${hoursLabel}</span></div>
+          <div class="breakdown">${parts.join(" · ") || "0 hrs — no jobs this week"}</div>
         </div>
       `;
     });
