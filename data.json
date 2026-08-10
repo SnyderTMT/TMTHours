@@ -40,7 +40,7 @@
       "name": "DJ",
       "role": "mover",
       "createdAt": "2026-08-06T03:40:29.041Z",
-      "password": ""
+      "password": "1117"
     },
     {
       "id": "59bb5188-eb21-48a4-833b-e508377d8d40",
@@ -285,5 +285,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786386488718
+  "updatedAt": 1786388141312
 }
