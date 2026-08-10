@@ -110,7 +110,7 @@
       "name": "Rick",
       "createdAt": "2026-08-06T03:38:29.164Z",
       "role": "driver",
-      "password": ""
+      "password": "4666"
     },
     {
       "id": "59426586-2b01-4f6a-8309-b27b1e60bd08",
@@ -370,5 +370,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786390901788
+  "updatedAt": 1786391933933
 }
