@@ -68,7 +68,7 @@
       "name": "Joe",
       "role": "mover",
       "createdAt": "2026-08-06T03:41:24.841Z",
-      "password": ""
+      "password": "0890"
     },
     {
       "id": "5f7810ca-c84f-4e0b-85a9-64ab50d1d8ae",
@@ -319,5 +319,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786390106652
+  "updatedAt": 1786390245902
 }
