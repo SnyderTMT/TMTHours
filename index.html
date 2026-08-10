@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hours Scheduler — Two Men and a Truck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="login-gate" class="login-gate">
+    <div class="login-card">
+      <div class="brand login-brand">
+        <span class="brand-mark" aria-hidden="true">2</span>
+        <div>
+          <p class="brand-name">Two Men and a Truck</p>
+          <h1>Hours Scheduler</h1>
+        </div>
+      </div>
+      <p class="login-copy">Enter your password to continue.</p>
+      <form id="login-form" class="login-form" autocomplete="off">
+        <div class="field-row">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Password" />
+        </div>
+        <p id="login-error" class="login-error" hidden>Wrong password.</p>
+        <button type="submit" class="btn-primary">Log in</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="page" id="app-shell" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">2</span>
+        <div>
+          <p class="brand-name">Two Men and a Truck</p>
+          <h1>Hours Scheduler</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <p id="session-label" class="session-label"></p>
+        <button type="button" id="logout-btn" class="btn-ghost">Log out</button>
+        <nav class="tabs" role="tablist">
+          <button class="tab is-active manager-only" data-tab="log" type="button">Log Hours</button>
+          <button class="tab" data-tab="week" type="button">Weekly Totals</button>
+          <button class="tab" data-tab="employee" type="button">My Hours</button>
+          <button class="tab manager-only" data-tab="crew" type="button">Crew</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- LOG HOURS -->
+      <section id="panel-log" class="panel is-active manager-only" role="tabpanel">
+        <div class="section-head">
+          <h2>Log a job</h2>
+          <p>Pick trucks first — each truck needs 1 driver and 1–4 movers. Then set Local, LD, or Non-billable only.</p>
+        </div>
+
+        <form id="log-form" class="log-form" autocomplete="off">
+          <p id="edit-banner" class="edit-banner" hidden>Editing a recent job — change anything below, then update.</p>
+
+          <div class="field-row">
+            <label>How many trucks?</label>
+            <div id="truck-count-btns" class="truck-count-btns" role="group" aria-label="Number of trucks">
+              <button type="button" class="truck-count-btn is-active" data-trucks="1">1 truck</button>
+              <button type="button" class="truck-count-btn" data-trucks="2">2 trucks</button>
+              <button type="button" class="truck-count-btn" data-trucks="3">3 trucks</button>
+              <button type="button" class="truck-count-btn" data-trucks="4">4 trucks</button>
+              <button type="button" class="truck-count-btn" data-trucks="5">5 trucks</button>
+            </div>
+          </div>
+
+          <div id="truck-panels" class="truck-panels"></div>
+          <p id="crew-picked-count" class="crew-picked-count">0 selected</p>
+          <p class="hours-cap-note">Names turn red if this pay week (Sun–Sat) is already over 40 hrs, or this job would push them over 40.</p>
+
+          <div class="field-row">
+            <label for="job-type">Job type</label>
+            <select id="job-type">
+              <option value="local">Local (estimated hours)</option>
+              <option value="ld">LD — Long Distance</option>
+              <option value="nb">Non-billable only</option>
+            </select>
+          </div>
+
+          <div class="field-grid" id="date-fields">
+            <div class="field-row">
+              <label for="date" id="date-label">Date</label>
+              <input type="date" id="date" required />
+            </div>
+            <div class="field-row" id="end-date-row" hidden>
+              <label for="end-date">End date</label>
+              <input type="date" id="end-date" />
+            </div>
+          </div>
+
+          <div id="estimate-row" class="field-row">
+            <label for="estimate">Estimated hours</label>
+            <input type="number" id="estimate" min="0" step="0.25" placeholder="e.g. 4.5" required />
+          </div>
+
+          <p id="ld-note" class="ld-note" hidden>
+            Long Distance moves are flat-rate and often span multiple days — set the start and end date. No estimated hours needed.
+          </p>
+
+          <p id="nb-only-note" class="ld-note" hidden>
+            Non-billable only — no job estimate. Enter the set hours below (training, shop, travel, etc.).
+          </p>
+
+          <div class="field-row">
+            <label for="job-note">Job note <span class="optional">(optional)</span></label>
+            <input type="text" id="job-note" placeholder="Customer, stop, or job reference" />
+          </div>
+
+          <div class="nonbillable">
+            <label class="toggle">
+              <input type="checkbox" id="nb-toggle" />
+              <span>Add non-billable hours</span>
+            </label>
+            <div id="nb-fields" class="nb-fields" hidden>
+              <div class="field-grid">
+                <div class="field-row">
+                  <label for="nb-hours">Non-billable hours</label>
+                  <input type="number" id="nb-hours" min="0" step="0.25" placeholder="e.g. 1" />
+                </div>
+                <div class="field-row">
+                  <label for="nb-reason">Reason <span class="optional">(optional)</span></label>
+                  <input type="text" id="nb-reason" placeholder="Training, travel, shop, etc." />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="log-submit">Save job</button>
+            <button type="button" class="btn-ghost" id="log-cancel" hidden>Cancel edit</button>
+          </div>
+        </form>
+
+        <div class="section-head section-head-spaced">
+          <h2>Recent entries</h2>
+          <p>Newest first. Edit or delete a job if something was logged wrong. Multiple jobs on the same day are fine.</p>
+        </div>
+        <div id="entries-list" class="entries"></div>
+      </section>
+
+      <!-- WEEKLY TOTALS -->
+      <section id="panel-week" class="panel" role="tabpanel" hidden>
+        <div class="section-head">
+          <h2>Weekly totals</h2>
+          <p>Estimated job hours plus any non-billable time for the selected week.</p>
+        </div>
+
+        <div class="week-controls">
+          <button type="button" id="week-prev" class="btn-ghost" aria-label="Previous week">←</button>
+          <div class="week-label">
+            <span id="week-range"></span>
+          </div>
+          <button type="button" id="week-next" class="btn-ghost" aria-label="Next week">→</button>
+          <button type="button" id="week-today" class="btn-ghost">This week</button>
+          <label class="week-sort-label" for="week-sort">Sort</label>
+          <select id="week-sort" class="week-sort">
+            <option value="high">Highest to lowest</option>
+            <option value="low">Lowest to highest</option>
+            <option value="name">Name A–Z</option>
+          </select>
+          <button type="button" id="clear-week-btn" class="btn-danger-solid" hidden>
+            Clear this week
+          </button>
+          <button type="button" id="delete-all-jobs-btn" class="btn-danger-solid" hidden>
+            Delete all jobs
+          </button>
+        </div>
+
+        <div id="week-summary" class="week-summary"></div>
+
+        <div class="week-detail-head">
+          <div class="section-head">
+            <h2>Week detail</h2>
+            <p>Jobs for this week. Filter by day, or use Edit / Delete to fix crew, hours, dates, or notes.</p>
+          </div>
+          <div class="week-detail-filters">
+            <label for="week-detail-date">Filter by date</label>
+            <select id="week-detail-date" class="week-sort">
+              <option value="all">All days this week</option>
+            </select>
+          </div>
+        </div>
+        <div id="week-detail" class="entries"></div>
+      </section>
+
+      <!-- EMPLOYEE FOCUS -->
+      <section id="panel-employee" class="panel" role="tabpanel" hidden>
+        <div class="section-head">
+          <h2 id="employee-panel-title">Employee focus</h2>
+          <p id="employee-panel-copy">Search someone and see their jobs and hours week by week. You can edit jobs from here too.</p>
+        </div>
+
+        <div id="employee-picker-wrap" class="field-row">
+          <label for="employee-focus-search">Search employee</label>
+          <input
+            type="search"
+            id="employee-focus-search"
+            class="crew-search"
+            placeholder="Type a name…"
+            autocomplete="off"
+          />
+        </div>
+        <div id="employee-focus-results" class="employee-focus-results"></div>
+        <div id="employee-focus-view" class="employee-focus-view"></div>
+      </section>
+
+      <!-- CREW -->
+      <section id="panel-crew" class="panel manager-only" role="tabpanel" hidden>
+        <div class="section-head">
+          <h2>Crew roster</h2>
+          <p>Add people and edit names, roles, or passwords anytime. Fix jobs from Log Hours, Weekly Totals, or Employee (Edit / Delete on each job).</p>
+        </div>
+
+        <form id="manager-pass-form" class="log-form manager-pass-form" autocomplete="off">
+          <div class="section-head" style="margin-bottom: 0.75rem">
+            <h2 style="font-size: 1.15rem">Manager passwords</h2>
+            <p>Two manager logins. Only Manager 2 can clear an entire pay week.</p>
+          </div>
+          <div class="field-grid">
+            <div class="field-row">
+              <label for="manager-pass-1">Manager password 1</label>
+              <input type="password" id="manager-pass-1" required />
+            </div>
+            <div class="field-row">
+              <label for="manager-pass-2">Manager password 2 (clear-week access)</label>
+              <input type="password" id="manager-pass-2" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Save manager passwords</button>
+        </form>
+
+        <form id="crew-form" class="crew-form" autocomplete="off">
+          <div class="field-row grow">
+            <label for="new-name">Employee name</label>
+            <input type="text" id="new-name" placeholder="First and last name" required />
+          </div>
+          <div class="field-row role-field">
+            <label for="new-role">Role</label>
+            <select id="new-role" required>
+              <option value="mover">Mover</option>
+              <option value="driver">Driver</option>
+            </select>
+          </div>
+          <div class="field-row role-field">
+            <label for="new-password">Login password</label>
+            <input type="text" id="new-password" placeholder="Their password" required />
+          </div>
+          <button type="submit" class="btn-primary">Add</button>
+        </form>
+
+        <div id="crew-list" class="crew-list"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
