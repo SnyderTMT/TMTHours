@@ -1,8 +1,289 @@
 {
-  "employees": [],
-  "entries": [],
+  "employees": [
+    {
+      "id": "edc07cbe-e246-497f-bef2-569eb3361607",
+      "name": "Alonte",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:51.532Z",
+      "password": ""
+    },
+    {
+      "id": "4ed532d0-b9cf-4fb9-8c5e-a5fc470d4fd2",
+      "name": "B",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:00.766Z",
+      "password": ""
+    },
+    {
+      "id": "e2855cd6-f5a3-4a4e-84d0-e7f76de86ccd",
+      "name": "Braden",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:14.014Z",
+      "password": ""
+    },
+    {
+      "id": "c9efb259-1425-4511-acc3-0413a748a2bc",
+      "name": "Chris",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:40:39.749Z",
+      "password": "9035"
+    },
+    {
+      "id": "9759b3d2-9213-415a-8b55-465f24b16167",
+      "name": "Dannyboy",
+      "createdAt": "2026-08-06T03:38:09.803Z",
+      "role": "driver",
+      "password": ""
+    },
+    {
+      "id": "1a181123-2390-4e9f-aa85-16920468e54d",
+      "name": "DJ",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:40:29.041Z",
+      "password": ""
+    },
+    {
+      "id": "59bb5188-eb21-48a4-833b-e508377d8d40",
+      "name": "George",
+      "role": "mover",
+      "createdAt": "2026-08-06T04:06:58.903Z",
+      "password": ""
+    },
+    {
+      "id": "59a5af61-fed4-4e81-9538-a1a18d33448e",
+      "name": "Isaac",
+      "role": "driver",
+      "createdAt": "2026-08-06T03:40:14.172Z",
+      "password": "0317"
+    },
+    {
+      "id": "105d8c04-8dd9-4488-af70-572655c653ec",
+      "name": "Ivan",
+      "createdAt": "2026-08-06T03:38:21.228Z",
+      "role": "driver",
+      "password": ""
+    },
+    {
+      "id": "1ca0cde8-aea5-4652-bf45-c26664fb381d",
+      "name": "Joe",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:24.841Z",
+      "password": ""
+    },
+    {
+      "id": "5f7810ca-c84f-4e0b-85a9-64ab50d1d8ae",
+      "name": "Kalib",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:06.442Z",
+      "password": ""
+    },
+    {
+      "id": "5169b3f5-40d9-4814-8714-b356f2b03418",
+      "name": "Luke",
+      "role": "driver",
+      "createdAt": "2026-08-06T03:40:22.224Z",
+      "password": ""
+    },
+    {
+      "id": "dd364f27-edb8-42b5-b037-770e09836d8c",
+      "name": "Matthew",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:37.571Z",
+      "password": "8372"
+    },
+    {
+      "id": "0720b231-f1a8-4fbf-a227-7fe6e87ae2f8",
+      "name": "Mike",
+      "createdAt": "2026-08-06T03:38:25.357Z",
+      "role": "driver",
+      "password": ""
+    },
+    {
+      "id": "6d965c34-5cf8-409c-bb26-67dbfe88f24a",
+      "name": "Paden",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:30.959Z",
+      "password": ""
+    },
+    {
+      "id": "35bc1b3d-194a-4015-aef3-249e925d2648",
+      "name": "Rick",
+      "createdAt": "2026-08-06T03:38:29.164Z",
+      "role": "driver",
+      "password": ""
+    },
+    {
+      "id": "59426586-2b01-4f6a-8309-b27b1e60bd08",
+      "name": "Ricky",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:41:19.844Z",
+      "password": ""
+    },
+    {
+      "id": "390b9929-a6c6-4377-8a89-01faf1fe5486",
+      "name": "Seth",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:40:45.162Z",
+      "password": ""
+    },
+    {
+      "id": "920fba71-77ea-48c8-8e66-34a0a887ffb5",
+      "name": "Todd",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:40:50.928Z",
+      "password": ""
+    },
+    {
+      "id": "5db28f60-3b8c-40e9-9938-e0bdea9362a9",
+      "name": "Vickers",
+      "role": "mover",
+      "createdAt": "2026-08-06T03:40:34.837Z",
+      "password": ""
+    }
+  ],
+  "entries": [
+    {
+      "id": "3a856053-f3db-4788-bfad-eb5156ed0c43",
+      "employeeId": "35bc1b3d-194a-4015-aef3-249e925d2648",
+      "truckNumber": 1,
+      "jobRole": "driver",
+      "jobGroupId": "6301f796-299a-4104-a86d-9b0a5b37e2cd",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 5.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 1/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:30:28.775Z",
+      "updatedAt": "2026-08-10T16:30:28.776Z"
+    },
+    {
+      "id": "0fca4dd4-5b22-45d8-9806-7511466e75d5",
+      "employeeId": "6d965c34-5cf8-409c-bb26-67dbfe88f24a",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "6301f796-299a-4104-a86d-9b0a5b37e2cd",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 5.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 1/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:30:28.775Z",
+      "updatedAt": "2026-08-10T16:30:28.776Z"
+    },
+    {
+      "id": "5ab60269-00ce-42c0-b944-05fda07a20b1",
+      "employeeId": "390b9929-a6c6-4377-8a89-01faf1fe5486",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "6301f796-299a-4104-a86d-9b0a5b37e2cd",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 5.5,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 1/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:30:28.775Z",
+      "updatedAt": "2026-08-10T16:30:28.776Z"
+    },
+    {
+      "id": "afdc37e3-0f03-4a33-9f37-b8711050d2b5",
+      "employeeId": "0720b231-f1a8-4fbf-a227-7fe6e87ae2f8",
+      "truckNumber": 1,
+      "jobRole": "driver",
+      "jobGroupId": "23ff6a96-c117-4d7d-b266-21d109bed8be",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 4,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 1/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:31:09.734Z",
+      "updatedAt": "2026-08-10T16:31:09.734Z"
+    },
+    {
+      "id": "74e70f4d-347b-406a-91d6-b2d53a01931a",
+      "employeeId": "5db28f60-3b8c-40e9-9938-e0bdea9362a9",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "23ff6a96-c117-4d7d-b266-21d109bed8be",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 4,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "job 1/2",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:31:09.734Z",
+      "updatedAt": "2026-08-10T16:31:09.734Z"
+    },
+    {
+      "id": "8099ed6c-3cef-48c5-ad98-4d3280f47741",
+      "employeeId": "9759b3d2-9213-415a-8b55-465f24b16167",
+      "truckNumber": 1,
+      "jobRole": "driver",
+      "jobGroupId": "2460cd29-0ace-43de-9b86-6a3307ba98e8",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 3,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "slippery rock",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:31:31.699Z",
+      "updatedAt": "2026-08-10T16:31:31.699Z"
+    },
+    {
+      "id": "1804b9e5-bc4e-43bb-9ef6-c17ebbfda896",
+      "employeeId": "920fba71-77ea-48c8-8e66-34a0a887ffb5",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "2460cd29-0ace-43de-9b86-6a3307ba98e8",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 3,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "slippery rock",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:31:31.699Z",
+      "updatedAt": "2026-08-10T16:31:31.699Z"
+    },
+    {
+      "id": "e49296ed-ca62-4d81-8505-9b8003bda596",
+      "employeeId": "4ed532d0-b9cf-4fb9-8c5e-a5fc470d4fd2",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "2460cd29-0ace-43de-9b86-6a3307ba98e8",
+      "date": "2026-08-10",
+      "endDate": "2026-08-10",
+      "jobType": "local",
+      "estimatedHours": 3,
+      "nonBillableHours": 0,
+      "nonBillableReason": "",
+      "jobNote": "slippery rock",
+      "truckCount": 1,
+      "createdAt": "2026-08-10T16:31:31.699Z",
+      "updatedAt": "2026-08-10T16:31:31.699Z"
+    }
+  ],
   "settings": {
-    "managerPasswords": ["manager1", "Maple!1997DS"]
+    "managerPasswords": [
+      "manager1",
+      "Maple!1997DS"
+    ]
   },
-  "updatedAt": 0
+  "updatedAt": 1786382370454
 }
