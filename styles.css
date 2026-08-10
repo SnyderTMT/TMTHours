@@ -65,6 +65,57 @@ body {
   color: var(--muted);
 }
 
+.sync-status {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.sync-status.sync-live {
+  color: #1a7a3c;
+}
+
+.sync-status.sync-local {
+  color: var(--muted);
+}
+
+.sync-status.sync-error {
+  color: var(--danger);
+}
+
+#sync-status-app {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.publish-box {
+  margin: 1.5rem 0;
+  padding: 1rem 1.1rem;
+  background: var(--white);
+  border: 2px solid var(--ink);
+}
+
+.publish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.publish-import-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.publish-box code {
+  font-size: 0.95em;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;

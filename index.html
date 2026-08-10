@@ -20,6 +20,7 @@
         </div>
       </div>
       <p class="login-copy">Enter your password to continue.</p>
+      <p id="sync-status" class="sync-status sync-local">Loading shop data…</p>
       <form id="login-form" class="login-form" autocomplete="off">
         <div class="field-row">
           <label for="login-password">Password</label>
@@ -38,6 +39,7 @@
         <div>
           <p class="brand-name">Two Men and a Truck</p>
           <h1>Hours Scheduler</h1>
+          <p id="sync-status-app" class="sync-status sync-local" hidden></p>
         </div>
       </div>
       <div class="topbar-right">
@@ -220,7 +222,7 @@
           <h2>Crew roster</h2>
           <p>Add people and edit names, roles, or passwords anytime. Fix jobs from Log Hours, Weekly Totals, or Employee (Edit / Delete on each job).</p>
         </div>
- 
+
         <form id="manager-pass-form" class="log-form manager-pass-form" autocomplete="off">
           <div class="section-head" style="margin-bottom: 0.75rem">
             <h2 style="font-size: 1.15rem">Manager passwords</h2>
@@ -238,6 +240,26 @@
           </div>
           <button type="submit" class="btn-primary">Save manager passwords</button>
         </form>
+
+        <div class="publish-box manager-only">
+          <div class="section-head" style="margin-bottom: 0.75rem">
+            <h2 style="font-size: 1.15rem">Share with employees</h2>
+            <p>
+              After you add crew or jobs, download <code>data.json</code>, put it in your
+              TMTHours GitHub folder (replace the old one), and upload. Employees refresh the
+              live site to see the new hours.
+            </p>
+          </div>
+          <div class="publish-actions">
+            <button type="button" id="publish-download-btn" class="btn-primary">
+              Download data.json
+            </button>
+            <label class="btn-ghost publish-import-label">
+              Import data.json
+              <input type="file" id="publish-import-input" accept="application/json,.json" hidden />
+            </label>
+          </div>
+        </div>
 
         <form id="crew-form" class="crew-form" autocomplete="off">
           <div class="field-row grow">

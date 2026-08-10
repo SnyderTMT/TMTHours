@@ -1,11 +1,12 @@
 const STORAGE_KEY = "tmt-hours-scheduler-v1";
 const SESSION_KEY = "tmt-hours-session-v1";
+const DATA_FILE = "data.json";
 const DEFAULT_MANAGER_PASSWORDS = ["manager1", "Maple!1997DS"];
 const MANAGER2_PASSWORD = "Maple!1997DS";
 const WEEK_HOUR_CAP = 40;
 
-const state = loadState();
-let session = loadSession();
+let state = loadState();
+let session = null;
 let weekAnchor = startOfWeek(new Date());
 let weekSort = "high";
 let weekDetailDate = "all";
@@ -14,6 +15,9 @@ let pendingTruckCrew = null;
 let focusedEmployeeId = null;
 let truckCount = 1;
 let truckCrew = [emptyTruck()];
+let appBooted = false;
+let publishedUpdatedAt = null;
+let localUpdatedAt = Number(localStorage.getItem(`${STORAGE_KEY}-updatedAt`)) || 0;
 
 function emptyTruck() {
   return { driverId: "", moverIds: [], search: "" };
@@ -101,20 +105,196 @@ const els = {
   newPassword: document.getElementById("new-password"),
   crewList: document.getElementById("crew-list"),
   toast: document.getElementById("toast"),
+  syncStatus: document.getElementById("sync-status"),
+  syncStatusApp: document.getElementById("sync-status-app"),
+  publishDownloadBtn: document.getElementById("publish-download-btn"),
+  publishImportInput: document.getElementById("publish-import-input"),
 };
 
 init();
 
-function init() {
+async function init() {
   els.loginForm.addEventListener("submit", onLoginSubmit);
   els.logoutBtn.addEventListener("click", onLogout);
 
+  setSyncStatus("local", "Loading shop data…");
+  await loadPublishedData();
+  refreshPublishStatus();
+
+  session = loadSession();
   if (!isLoggedIn()) {
     showLogin();
     return;
   }
 
   bootApp();
+}
+
+function setSyncStatus(kind, label) {
+  const className =
+    kind === "live" ? "sync-live" : kind === "error" ? "sync-error" : "sync-local";
+  [els.syncStatus, els.syncStatusApp].forEach((el) => {
+    if (!el) return;
+    el.textContent = label;
+    el.className = `sync-status ${className}`;
+    if (el === els.syncStatusApp) el.hidden = false;
+  });
+}
+
+function refreshPublishStatus() {
+  if (publishedUpdatedAt && localUpdatedAt <= publishedUpdatedAt) {
+    const when = formatPublishTime(publishedUpdatedAt);
+    setSyncStatus(
+      "live",
+      when
+        ? `Published shop data (${when}) — employees see this after refresh`
+        : "Published shop data loaded"
+    );
+    return;
+  }
+  if (state.employees.length || state.entries.length) {
+    setSyncStatus(
+      "local",
+      "Local changes not published yet — Crew tab → Download data.json → upload to GitHub"
+    );
+    return;
+  }
+  setSyncStatus(
+    "local",
+    "No published data yet — add crew/jobs, then download data.json and upload to GitHub"
+  );
+}
+
+function formatPublishTime(ms) {
+  try {
+    return new Date(ms).toLocaleString();
+  } catch {
+    return "";
+  }
+}
+
+function normalizeSettings(settings) {
+  const passwords = settings?.managerPasswords;
+  const manager1 =
+    Array.isArray(passwords) && passwords.length >= 1
+      ? String(passwords[0] || DEFAULT_MANAGER_PASSWORDS[0])
+      : DEFAULT_MANAGER_PASSWORDS[0];
+  return {
+    managerPasswords: [manager1 || DEFAULT_MANAGER_PASSWORDS[0], MANAGER2_PASSWORD],
+  };
+}
+
+function applyShopPayload(payload, { fromPublishFile = false } = {}) {
+  if (!payload || typeof payload !== "object") return false;
+  state.employees = Array.isArray(payload.employees) ? payload.employees : [];
+  state.entries = Array.isArray(payload.entries) ? payload.entries : [];
+  state.settings = normalizeSettings(payload.settings);
+  const stamp = Number(payload.updatedAt) || Date.now();
+  if (fromPublishFile) {
+    publishedUpdatedAt = stamp;
+    localUpdatedAt = stamp;
+  } else {
+    localUpdatedAt = stamp;
+  }
+  migrateEmployeeRoles({ persist: false });
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      employees: state.employees,
+      entries: state.entries,
+      settings: state.settings,
+    })
+  );
+  localStorage.setItem(`${STORAGE_KEY}-updatedAt`, String(localUpdatedAt));
+  if (appBooted) {
+    applyAccessControl();
+    renderAll();
+  }
+  refreshPublishStatus();
+  return true;
+}
+
+function buildPublishPayload() {
+  return {
+    employees: state.employees,
+    entries: state.entries,
+    settings: state.settings,
+    updatedAt: Date.now(),
+  };
+}
+
+async function loadPublishedData() {
+  try {
+    const response = await fetch(`${DATA_FILE}?t=${Date.now()}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      refreshPublishStatus();
+      return;
+    }
+    const payload = await response.json();
+    const hasData =
+      (Array.isArray(payload.employees) && payload.employees.length) ||
+      (Array.isArray(payload.entries) && payload.entries.length) ||
+      payload.settings;
+    if (!hasData) {
+      publishedUpdatedAt = Number(payload.updatedAt) || 0;
+      refreshPublishStatus();
+      return;
+    }
+    const remoteStamp = Number(payload.updatedAt) || 0;
+    // Prefer newer local edits on this device; otherwise use published file
+    if (localUpdatedAt && localUpdatedAt > remoteStamp) {
+      publishedUpdatedAt = remoteStamp;
+      refreshPublishStatus();
+      return;
+    }
+    applyShopPayload(payload, { fromPublishFile: true });
+  } catch {
+    // Opening as a local file:// page often can't fetch data.json — localStorage still works
+    refreshPublishStatus();
+  }
+}
+
+function onPublishDownload() {
+  if (!isManager()) return;
+  const payload = buildPublishPayload();
+  localUpdatedAt = payload.updatedAt;
+  localStorage.setItem(`${STORAGE_KEY}-updatedAt`, String(localUpdatedAt));
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = DATA_FILE;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast("Downloaded data.json — replace the file in your GitHub repo, then wait ~1 min");
+  refreshPublishStatus();
+}
+
+function onPublishImport(event) {
+  if (!isManager()) return;
+  const file = event.target.files?.[0];
+  event.target.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const payload = JSON.parse(String(reader.result || ""));
+      if (!applyShopPayload(payload, { fromPublishFile: false })) {
+        showToast("That file doesn’t look like shop data");
+        return;
+      }
+      showToast("Imported shop data into this browser");
+    } catch {
+      showToast("Could not read that file");
+    }
+  };
+  reader.readAsText(file);
 }
 
 function showLogin() {
@@ -191,6 +371,12 @@ function bootApp() {
   });
   els.clearWeekBtn.addEventListener("click", onClearWeek);
   els.deleteAllJobsBtn.addEventListener("click", onDeleteAllJobs);
+  if (els.publishDownloadBtn) {
+    els.publishDownloadBtn.addEventListener("click", onPublishDownload);
+  }
+  if (els.publishImportInput) {
+    els.publishImportInput.addEventListener("change", onPublishImport);
+  }
 
   els.entriesList.addEventListener("click", onEntriesClick);
   els.weekDetail.addEventListener("click", onEntriesClick);
@@ -204,6 +390,7 @@ function bootApp() {
   syncJobTypeFields();
   syncEditModeUi();
   applyAccessControl();
+  appBooted = true;
   renderAll();
 }
 
@@ -318,7 +505,7 @@ function applyAccessControl() {
   updateClearWeekButton();
 }
 
-function migrateEmployeeRoles() {
+function migrateEmployeeRoles({ persist = true } = {}) {
   let changed = false;
   state.employees = (state.employees || [])
     .filter((employee) => employee && (employee.name || employee.id))
@@ -344,7 +531,8 @@ function migrateEmployeeRoles() {
       }
       return next;
     });
-  if (changed) saveState();
+  if (changed && persist) saveState();
+  return changed;
 }
 
 function loadState() {
@@ -385,7 +573,17 @@ function loadState() {
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localUpdatedAt = Date.now();
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      employees: state.employees,
+      entries: state.entries,
+      settings: state.settings,
+    })
+  );
+  localStorage.setItem(`${STORAGE_KEY}-updatedAt`, String(localUpdatedAt));
+  refreshPublishStatus();
 }
 
 function switchTab(name) {
