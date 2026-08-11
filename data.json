@@ -19,7 +19,7 @@
       "name": "Braden",
       "role": "mover",
       "createdAt": "2026-08-06T03:41:14.014Z",
-      "password": ""
+      "password": "4321"
     },
     {
       "id": "c9efb259-1425-4511-acc3-0413a748a2bc",
@@ -370,5 +370,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786392422435
+  "updatedAt": 1786446531843
 }
