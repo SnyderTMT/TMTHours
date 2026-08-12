@@ -515,6 +515,23 @@
       "truckCount": 1,
       "createdAt": "2026-08-11T19:39:15.106Z",
       "updatedAt": "2026-08-11T19:39:15.106Z"
+    },
+    {
+      "id": "abc00e59-ed8a-4e96-ae84-952ce8aaf37a",
+      "employeeId": "1ca0cde8-aea5-4652-bf45-c26664fb381d",
+      "truckNumber": null,
+      "jobRole": "mover",
+      "jobGroupId": "14d86f03-0dd1-4a3b-9dc6-d2b1903932cc",
+      "date": "2026-08-11",
+      "endDate": "2026-08-11",
+      "jobType": "nb",
+      "estimatedHours": 0,
+      "nonBillableHours": 6,
+      "nonBillableReason": "",
+      "jobNote": "",
+      "truckCount": 0,
+      "createdAt": "2026-08-12T11:22:04.626Z",
+      "updatedAt": "2026-08-12T11:22:04.627Z"
     }
   ],
   "settings": {
@@ -523,5 +540,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786477162420
+  "updatedAt": 1786533733621
 }
