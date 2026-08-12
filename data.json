@@ -82,7 +82,7 @@
       "name": "Luke",
       "role": "driver",
       "createdAt": "2026-08-06T03:40:22.224Z",
-      "password": ""
+      "password": "1234"
     },
     {
       "id": "dd364f27-edb8-42b5-b037-770e09836d8c",
@@ -540,5 +540,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786533733621
+  "updatedAt": 1786534539516
 }
