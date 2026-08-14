@@ -685,6 +685,74 @@
       "truckCount": 1,
       "createdAt": "2026-08-12T19:50:33.875Z",
       "updatedAt": "2026-08-12T19:50:33.875Z"
+    },
+    {
+      "id": "7124bee1-f509-48cb-a641-bd69383b62b5",
+      "employeeId": "0720b231-f1a8-4fbf-a227-7fe6e87ae2f8",
+      "truckNumber": 1,
+      "jobRole": "driver",
+      "jobGroupId": "8ec25e0c-292a-432c-8bb8-6d4afef66cb0",
+      "date": "2026-08-13",
+      "endDate": "2026-08-13",
+      "jobType": "local",
+      "nonBillableReason": "",
+      "jobNote": "YMCA",
+      "truckCount": 1,
+      "createdAt": "2026-08-14T11:25:12.809Z",
+      "updatedAt": "2026-08-14T11:34:41.367Z",
+      "estimatedHours": 9.25,
+      "nonBillableHours": 0.5
+    },
+    {
+      "id": "19acc2de-4399-4af0-89cd-d72a0b9f2a77",
+      "employeeId": "1a181123-2390-4e9f-aa85-16920468e54d",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "8ec25e0c-292a-432c-8bb8-6d4afef66cb0",
+      "date": "2026-08-13",
+      "endDate": "2026-08-13",
+      "jobType": "local",
+      "nonBillableReason": "",
+      "jobNote": "YMCA",
+      "truckCount": 1,
+      "createdAt": "2026-08-14T11:25:12.809Z",
+      "updatedAt": "2026-08-14T11:34:41.367Z",
+      "estimatedHours": 9.25,
+      "nonBillableHours": 0.5
+    },
+    {
+      "id": "d9274a13-53f8-4004-a32f-5538994ece93",
+      "employeeId": "920fba71-77ea-48c8-8e66-34a0a887ffb5",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "8ec25e0c-292a-432c-8bb8-6d4afef66cb0",
+      "date": "2026-08-13",
+      "endDate": "2026-08-13",
+      "jobType": "local",
+      "nonBillableReason": "",
+      "jobNote": "YMCA",
+      "truckCount": 1,
+      "createdAt": "2026-08-14T11:25:12.809Z",
+      "updatedAt": "2026-08-14T11:34:41.367Z",
+      "estimatedHours": 9.25,
+      "nonBillableHours": 0.5
+    },
+    {
+      "id": "cfaffda3-574f-4fac-81bd-98892c77e955",
+      "employeeId": "6d965c34-5cf8-409c-bb26-67dbfe88f24a",
+      "truckNumber": 1,
+      "jobRole": "mover",
+      "jobGroupId": "8ec25e0c-292a-432c-8bb8-6d4afef66cb0",
+      "date": "2026-08-13",
+      "endDate": "2026-08-13",
+      "jobType": "local",
+      "nonBillableReason": "",
+      "jobNote": "YMCA",
+      "truckCount": 1,
+      "createdAt": "2026-08-14T11:25:12.809Z",
+      "updatedAt": "2026-08-14T11:34:41.367Z",
+      "estimatedHours": 7.75,
+      "nonBillableHours": 0.5
     }
   ],
   "settings": {
@@ -693,5 +761,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786564246694
+  "updatedAt": 1786707302741
 }
