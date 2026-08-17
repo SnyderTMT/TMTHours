@@ -1,13 +1,6 @@
 {
   "employees": [
     {
-      "id": "edc07cbe-e246-497f-bef2-569eb3361607",
-      "name": "Alonte",
-      "role": "mover",
-      "createdAt": "2026-08-06T03:41:51.532Z",
-      "password": ""
-    },
-    {
       "id": "4ed532d0-b9cf-4fb9-8c5e-a5fc470d4fd2",
       "name": "B",
       "role": "mover",
@@ -1203,5 +1196,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786969555957
+  "updatedAt": 1786969758498
 }
