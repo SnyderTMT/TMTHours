@@ -57,6 +57,13 @@
       "password": "8497"
     },
     {
+      "id": "4e309a39-7957-4b20-b9e6-e82f829fcf62",
+      "name": "Jamar",
+      "role": "mover",
+      "password": "1990",
+      "createdAt": "2026-08-17T14:46:58.748Z"
+    },
+    {
       "id": "1ca0cde8-aea5-4652-bf45-c26664fb381d",
       "name": "Joe",
       "role": "mover",
@@ -1196,5 +1203,5 @@
       "Maple!1997DS"
     ]
   },
-  "updatedAt": 1786969758498
+  "updatedAt": 1786978087817
 }
